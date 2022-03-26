@@ -5,9 +5,9 @@ from head_position import insert_filenames
 
 
 def sort_train_images():
-    folder_src = '..\\data\\train_set\\images'
-    folder_annotations = '..\\data\\train_set\\annotations'
-    folder_dst = '..\\dataset\\train'
+    folder_src = '../data/train_set/images'
+    folder_annotations = '../data/train_set/annotations'
+    folder_dst = '../dataset/train'
     emotions = {
         '0': 'Neutral',
         '1': 'Happiness',
@@ -46,9 +46,9 @@ def sort_train_images():
 
 def sort_validation_images():
     dataset = 'val_set'
-    folder_src = f'..\\data\\{dataset}\\images'
-    folder_annotations = f'..\\data\\{dataset}\\annotations'
-    folder_dst = '..\\dataset\\validation'
+    folder_src = f'../data/{dataset}/images'
+    folder_annotations = f'../data/{dataset}/annotations'
+    folder_dst = '../dataset/validation'
     emotions = {
         '0': 'Neutral',
         '1': 'Happiness',
