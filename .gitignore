@@ -1,0 +1,7 @@
+data/
+dataset/
+models_trained/
+venv/
+.idea/
+__pycache__/
+*.tar.gz
