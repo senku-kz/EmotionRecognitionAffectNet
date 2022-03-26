@@ -34,10 +34,11 @@ docker build -t emotion_recognition_env:latest .
 # docker run --rm --name emotion -d -v ${PWD}:/app emotion_recognition_env tail -f /dev/null
 # docker run --rm --name emotion -ti -v ${PWD}:/app emotion_recognition_env
 docker run --rm --name emotion -d -v ${PWD}:/app emotion_recognition_env
-docker run --rm --name emotion -d -v ${PWD}:/app emotion_recognition_env python EmotionRecognitionAffectNet/dataset.py
 
 
 docker exec -it emotion bash
+
+
 
 
 docker save emotion_recognition_env > emotion_recognition_env.tar

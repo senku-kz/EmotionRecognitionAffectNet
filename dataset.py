@@ -31,7 +31,8 @@ def sort_train_images():
             filename = entry.split('.')[0]
             filename_annotation = os.path.join(folder_annotations, f'{filename}_exp.npy')
             if os.path.exists(filename_annotation):
-                data_array = np.load(filename_annotation)
+                # data_array = np.load(filename_annotation)
+                data_array = np.load(filename_annotation, allow_pickle=True)
                 emotion_idx = data_array.item()
                 if not os.path.exists(os.path.join(folder_dst, emotions[emotion_idx])):
                     os.makedirs(os.path.join(folder_dst, emotions[emotion_idx]))
@@ -72,7 +73,8 @@ def sort_validation_images():
             filename = entry.split('.')[0]
             filename_annotation = os.path.join(folder_annotations, f'{filename}_exp.npy')
             if os.path.exists(filename_annotation):
-                data_array = np.load(filename_annotation)
+                # data_array = np.load(filename_annotation)
+                data_array = np.load(filename_annotation, allow_pickle=True)
                 emotion_idx = data_array.item()
                 if not os.path.exists(os.path.join(folder_dst, emotions[emotion_idx])):
                     os.makedirs(os.path.join(folder_dst, emotions[emotion_idx]))
