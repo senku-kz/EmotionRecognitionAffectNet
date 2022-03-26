@@ -1,7 +1,9 @@
 data/
-dataset/
+dataset/*
 models_trained/
 venv/
 .idea/
 __pycache__/
 *.tar.gz
+
+!models_trained/sqlite3.db
