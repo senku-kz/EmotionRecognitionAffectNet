@@ -167,8 +167,8 @@ def data_processing_val(batch_size=4):
     }
 
     dataset_uri = {
-        'train': '../train_class',
-        'test': '../test_class'
+        'train': '../AffectNet/train_class',
+        'test': '../AffectNet/test_class'
     }
     dataset = {
         'train': datasets.ImageFolder(dataset_uri['train'], data_transforms['train']),
@@ -285,7 +285,7 @@ def training_the_model(model, dataset, dataloader, class_names, epoch_num=1, lr=
         total_loss_file.write('\n'.join(['{:.4f}'.format(x) for x in log_valid_loss]))
         # total_loss_file.write('\n'.join(total_loss))
 
-    test_the_model(model, dataset['test'], v_dataloader['test'], criterion, device)
+    test_the_model(model, dataset['test'], dataloader['test'], criterion, device)
     pass
 
 
@@ -476,26 +476,29 @@ def test_model_separate_accuracy(model, batch_size, data_dir, model_dst='./model
         file.write('\n'.join([f'{k}\t{v}' for k, v in total_pred.items()]))
 
 
-if __name__ == '__main__':
-    batch_size = 12
-    epoch_number = 20
-    # learning_rate = 5e-4
-    learning_rate = 0.001
+def model_coatnet():
+    v_dataset, v_dataloader, v_classes = data_processing_val(batch_size=batch_size)
+    v_model = coatnet_0(num_classes=len(v_classes))
+    print('Trained model name is:', v_model.model_name)
+    # training_the_model(v_model, v_dataset, v_dataloader, v_classes, epoch_num=epoch_number, lr=learning_rate)
+    # test_the_model(v_model, v_dataset['test'], v_dataloader['test'], criterion=None, device='cuda:0', model_dst='./models_trained')
+    test_model_separate_accuracy(v_model, batch_size, '../AffectNet/train_class', model_dst='./models_trained')
 
-    # v_dataloader, v_classes = data_processing(batch_size=batch_size)
+
+def model_vgg():
     v_dataset, v_dataloader, v_classes = data_processing_val(batch_size=batch_size)
     v_model = VGG(in_channels=3, num_classes=len(v_classes))
-    # v_model = coatnet_0(num_classes=len(v_classes))
     print('Trained model name is:', v_model.model_name)
     training_the_model(v_model, v_dataset, v_dataloader, v_classes, epoch_num=epoch_number, lr=learning_rate)
     # test_the_model(v_model, v_dataset['test'], v_dataloader['test'], criterion=None, device='cuda:0', model_dst='./models_trained')
     test_model_separate_accuracy(v_model, batch_size, '../train_class', model_dst='./models_trained')
 
 
-    # # v_dataset, v_dataloader, v_classes = data_processing_val(batch_size=batch_size)
-    # v_model = VGG(in_channels=3, num_classes=len(v_classes))
-    # # v_model = coatnet_0(num_classes=len(v_classes))
-    # print('Trained model name is:', v_model.model_name)
-    # # training_the_model(v_model, v_dataset, v_dataloader, v_classes, epoch_num=epoch_number, lr=learning_rate)
-    #
-    # test_the_model(v_model, v_dataset['test'], v_dataloader['test'], criterion=None, device='cuda:0', model_dst='./models_trained')
+if __name__ == '__main__':
+    batch_size = 12
+    epoch_number = 20
+    # learning_rate = 5e-4
+    learning_rate = 0.001
+
+    model_coatnet()
+    # model_vgg()

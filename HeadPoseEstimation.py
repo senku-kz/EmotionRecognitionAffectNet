@@ -105,4 +105,4 @@ def headPoseEstimation(path):
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    headPoseEstimation(path='../test_class/class001/image0000002.jpg')
+    headPoseEstimation(path='data//train_set//images//0.jpg')

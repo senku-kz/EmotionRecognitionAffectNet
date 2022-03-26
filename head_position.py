@@ -7,6 +7,10 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from HeadPoseEstimation import headPoseEstimation
 
+
+"""pip install SQLAlchemy"""
+
+
 engine = create_engine('sqlite:///models_trained/sqlite3.db')
 Base = declarative_base()
 
@@ -110,5 +114,5 @@ if __name__ == '__main__':
     # print(f'The number of rows in table {HeadPositionTest.__tablename__} is {session.query(HeadPositionTest).count()}')
 
     # update_by_head_pose_estimation_train(directory='../train_class')
-    update_by_head_pose_estimation_test(directory='../test_class')
+    update_by_head_pose_estimation_test(directory='.\\data\\train_set\\images\\0.jpg')
     pass
