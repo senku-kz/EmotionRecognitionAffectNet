@@ -85,6 +85,34 @@ def insert_filenames(directory='../test_class'):
         session.commit()
 
 
+def insert_filenames(dataset='train', filename='test.img', class_label='test'):
+    print(dataset, filename, class_label)
+    if dataset.startswith('train'):
+        r = HeadPositionTrain(
+            dataset=dataset,
+            class_label=class_label,
+            filename=filename,
+            # camera_label=headPoseEstimation(file_name_uri)
+        )
+    elif dataset.startswith('test'):
+        r = HeadPositionTest(
+            dataset=dataset,
+            class_label=class_label,
+            filename=filename,
+            # camera_label=headPoseEstimation(file_name_uri)
+        )
+    elif dataset.startswith('val'):
+        r = HeadPositionValidation(
+            dataset=dataset,
+            class_label=class_label,
+            filename=filename,
+            # camera_label=headPoseEstimation(file_name_uri)
+        )
+
+    session.merge(r)
+    session.commit()
+
+
 def update_by_head_pose_estimation_train(directory='../'):
     q = session.query(HeadPositionTrain).filter(HeadPositionTrain.camera_label == None).all()
     for r in q:
@@ -114,5 +142,5 @@ if __name__ == '__main__':
     # print(f'The number of rows in table {HeadPositionTest.__tablename__} is {session.query(HeadPositionTest).count()}')
 
     # update_by_head_pose_estimation_train(directory='../train_class')
-    update_by_head_pose_estimation_test(directory='.\\data\\train_set\\images\\0.jpg')
+    # update_by_head_pose_estimation_test(directory='.\\data\\train_set\\images\\0.jpg')
     pass
