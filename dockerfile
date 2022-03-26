@@ -2,7 +2,7 @@ FROM python:3.9.0
 LABEL com.example.version="Emotion Recognition v2"
 RUN apt-get update
 RUN apt-get install -y curl git tar gzip
-RUN apt-get install -y ffmpeg libsm6 libxext6
+RUN apt-get install ffmpeg libsm6 libxext6 -y
 
 RUN pip install --upgrade pip==21.1.2
 WORKDIR /app
