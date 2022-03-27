@@ -141,6 +141,6 @@ if __name__ == '__main__':
     # print(f'The number of rows in table {HeadPositionValidation.__tablename__} is {session.query(HeadPositionValidation).count()}')
     # print(f'The number of rows in table {HeadPositionTest.__tablename__} is {session.query(HeadPositionTest).count()}')
 
-    # update_by_head_pose_estimation_train(directory='../train_class')
+    # update_by_head_pose_estimation_train(directory='../data/train_set')
     # update_by_head_pose_estimation_test(directory='.\\data\\train_set\\images\\0.jpg')
     pass
