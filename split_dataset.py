@@ -8,14 +8,17 @@ from torchvision.io import read_image
 from torch.utils.data import Dataset
 
 from sqlAlchemy_db import HeadPositionTrain, HeadPositionValidation, session
-from parameters import folder_dst_lst, db_sql_file, batch_size
+from parameters import folder_dst_lst, db_sql_file, batch_size, LIMIT_DATASET, SPLIT_TRAIN_SET
 
 
 class CustomImageDatasetFromSQLTrain(Dataset):
     def __init__(self, cammera_position, img_dir, transform=None, target_transform=None):
         con = sqlite3.connect(db_sql_file)
         if cammera_position == 'all':
-            smtm = f'SELECT filename, class_idx from {HeadPositionTrain.__tablename__} limit 1000'
+            if LIMIT_DATASET is None:
+                smtm = f'SELECT filename, class_idx from {HeadPositionTrain.__tablename__}'
+            else:
+                smtm = f'SELECT filename, class_idx from {HeadPositionTrain.__tablename__} limit {LIMIT_DATASET}'
         else:
             smtm = f'SELECT filename, class_label from {HeadPositionTrain.__tablename__} where camera_label = "{cammera_position}"'
         self.img_labels = pd.read_sql_query(smtm, con)
@@ -47,8 +50,10 @@ class CustomImageDatasetFromSQLValidation(Dataset):
     def __init__(self, cammera_position, img_dir, transform=None, target_transform=None):
         con = sqlite3.connect(db_sql_file)
         if cammera_position == 'all':
-            smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__}'
-            smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__} limit 10000'
+            if LIMIT_DATASET is None:
+                smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__}'
+            else:
+                smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__} limit {LIMIT_DATASET}'
         else:
             smtm = f'SELECT filename, class_label from {HeadPositionValidation.__tablename__} where camera_label = "{cammera_position}"'
         self.img_labels = pd.read_sql_query(smtm, con)
@@ -130,7 +135,7 @@ def ds_train_validation_all():
 
     # dataset_train = CustomImageDatasetFromSQL(cammera_position='Forward', img_dir=dataset_uri['train'], transform=data_transforms['train'])
     dataset_train = CustomImageDatasetFromSQLTrain(cammera_position='all', img_dir=dataset_uri['train'], transform=data_transforms['train'])
-    train_size = int(0.8 * len(dataset_train))
+    train_size = int(SPLIT_TRAIN_SET * len(dataset_train))
     test_size = len(dataset_train) - train_size
     train_dataset, test_dataset = torch.utils.data.random_split(dataset_train, [train_size, test_size])
 
@@ -219,7 +224,7 @@ def ds_test_cam(camera_position='all'):
 
     if dataset['validation'].img_labels.empty:
         print('Validation Dataset id empty!')
-        return False
+        return False, False
 
     dataloader = {
         # 'train': torch.utils.data.DataLoader(dataset['train'], batch_size=batch_size, shuffle=True),

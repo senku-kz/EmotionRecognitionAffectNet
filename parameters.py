@@ -12,8 +12,13 @@ folder_dst_dic = {i.split('/')[-1]: i for i in folder_dst_lst}
 
 # for train models
 batch_size = 8
-epoch_number = 3
+epoch_number = 1
 learning_rate = 0.001
+
+LIMIT_DATASET = 100
+# LIMIT_DATASET = None
+
+SPLIT_TRAIN_SET = 0.8
 
 # model_dst = '../dataset/model_trained'
 model_dst = './model_trained'

@@ -16,6 +16,7 @@ from models.CoAtNet import coatnet_0
 
 from split_dataset import ds_train_validation_all, ds_test_cam
 from parameters import epoch_number, learning_rate, model_dst
+from discrete_categories import camera_positions
 
 
 def normalize_image(image):
@@ -157,8 +158,8 @@ def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
 
 
 def train_one_step(model, dataloader, sample_size, optimizer, criterion, device):
-    epoch_loss = 0
-    epoch_acc = 0
+    epoch_loss = 0.0
+    epoch_acc = 0.0
 
     running_acc = 0.0
     running_loss = 0.0
@@ -247,7 +248,7 @@ def save_model(model, optimizer, criterion, model_file, epochs=0):
     print('Model saved', model_file)
 
 
-def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, model_dst=model_dst):
+def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, model_dst=model_dst, camera='all'):
     mini_batches = 50
     classes_idx = dataset.classes
     emotions = [
@@ -295,7 +296,7 @@ def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, mod
                 print(f'[Batch: {i + 1:5d}] \t {correct_pred}')
 
     # print accuracy for each class
-    print('='*20, 'All positions', '='*20)
+    print('='*20, camera, 'position(s)', '='*20)
     for classname, correct_count in correct_pred.items():
         if total_pred[classname] != 0:
             accuracy = 100 * float(correct_count) / total_pred[classname]
@@ -303,11 +304,11 @@ def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, mod
         else:
             print(f'Accuracy for class: {classname:5s} not available')
 
-    s1_file = os.path.join(model_dst, 'emotion_correct_%s.txt' % (model.model_name))
+    s1_file = os.path.join(model_dst, 'emotion_correct_%s_%s.txt' % (model.model_name, camera))
     with open(s1_file, 'w') as file:
         file.write('\n'.join([f'{k}:\t{v}' for k, v in correct_pred.items()]))
 
-    s2_file = os.path.join(model_dst, 'emotion_count_%s.txt' % (model.model_name))
+    s2_file = os.path.join(model_dst, 'emotion_count_%s_%s.txt' % (model.model_name, camera))
     with open(s2_file, 'w') as file:
         file.write('\n'.join([f'{k}\t{v}' for k, v in total_pred.items()]))
 
@@ -321,9 +322,14 @@ def model_coatnet():
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
     # Test model
-    v_dataset_test, v_dataloader_test = ds_test_cam('all')
+    camera = 'all'
+    v_dataset_test, v_dataloader_test = ds_test_cam(camera)
     test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
-    test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
+
+    for camera in camera_positions:
+        v_dataset_test, v_dataloader_test = ds_test_cam(camera)
+        if v_dataset_test and v_dataloader_test:
+            test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera=camera)
 
 
 def model_vgg():
@@ -337,8 +343,12 @@ def model_vgg():
     # Test model
     v_dataset_test, v_dataloader_test = ds_test_cam('all')
     test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
-    test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
+    test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera='all')
 
+    for camera in camera_positions:
+        v_dataset_test, v_dataloader_test = ds_test_cam(camera)
+        if v_dataset_test and v_dataloader_test:
+            test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera=camera)
     # v_dataset, v_dataloader, v_classes = data_processing_val(batch_size=batch_size)
     # v_model = VGG(in_channels=3, num_classes=len(v_classes))
     # print('Trained model name is:', v_model.model_name)
