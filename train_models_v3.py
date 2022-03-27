@@ -318,6 +318,7 @@ def model_coatnet():
     v_dataset, v_dataloader = ds_train_validation_all()
     v_classes = v_dataset['train'].dataset.classes
     v_model = coatnet_0(num_classes=len(v_classes))
+    print('='*60)
     print('Trained model name is:', v_model.model_name)
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
@@ -337,6 +338,7 @@ def model_vgg():
     v_dataset, v_dataloader = ds_train_validation_all()
     v_classes = v_dataset['train'].dataset.classes
     v_model = VGG(in_channels=3, num_classes=len(v_classes))
+    print('='*60)
     print('Trained model name is:', v_model.model_name)
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
