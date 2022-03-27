@@ -39,6 +39,9 @@ docker run --rm --name emotion -d -v ${PWD}:/app emotion_recognition_env
 docker exec -it emotion bash
 
 
+docker build -t create_sqlite:latest -f dockerfile_createSQLite .
+docker run --name sqlite -d -v ${PWD}:/app create_sqlite
+
 
 
 docker save emotion_recognition_env > emotion_recognition_env.tar
