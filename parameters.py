@@ -15,4 +15,5 @@ batch_size = 8
 epoch_number = 3
 learning_rate = 0.001
 
-model_dst = '../dataset/model_trained'
+# model_dst = '../dataset/model_trained'
+model_dst = './model_trained'
