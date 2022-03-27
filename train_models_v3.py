@@ -513,6 +513,6 @@ def model_vgg():
 
 
 if __name__ == '__main__':
-    # Hyper parameters imported from parameters.py
+    # Hyper parameters are import from parameters.py
     model_coatnet()
     model_vgg()
