@@ -1,29 +1,21 @@
 import os
-
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.optim as optim
-import torch.utils.data as data
-
-import torchvision.transforms as transforms
-import torchvision.datasets as datasets
 
 # from sklearn import decomposition
 # from sklearn import manifold
 # from sklearn.metrics import confusion_matrix
 # from sklearn.metrics import ConfusionMatrixDisplay
-from tqdm.notebook import tqdm, trange
-import copy
 import time
 import matplotlib.pyplot as plt
 import numpy as np
 
 from models.VGG import VGG
 from models.CoAtNet import coatnet_0
-from split_dataset import ds_train_validation_all, ds_test_cam
 
-from parameters import batch_size, epoch_number, learning_rate, model_dst
+from split_dataset import ds_train_validation_all, ds_test_cam
+from parameters import epoch_number, learning_rate, model_dst
 
 
 def normalize_image(image):
@@ -74,138 +66,6 @@ def calculate_accuracy(y_pred, y):
     correct = top_pred.eq(y.view_as(top_pred)).sum()
     acc = correct.float() / y.shape[0]
     return acc
-
-
-def data_processing(batch_size=4):
-    pretrained_size = 224
-    pretrained_means = [0.485, 0.456, 0.406]
-    pretrained_stds = [0.229, 0.224, 0.225]
-
-    # Data Transformation and Augmentation
-    data_transforms = {
-        'train': transforms.Compose([
-            transforms.Resize(pretrained_size),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=pretrained_means,
-                                 std=pretrained_stds)
-        ]),
-        'test': transforms.Compose([
-            transforms.Resize(pretrained_size),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=pretrained_means,
-                                 std=pretrained_stds)
-        ]),
-        'val': transforms.Compose([
-            transforms.Resize(pretrained_size),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=pretrained_means,
-                                 std=pretrained_stds)
-        ])
-    }
-
-    # ----
-    dataset_uri = {
-        'train': '../train_class',
-        'val': '../val_class',
-        'test': '../test_class'
-    }
-    dataset = {
-        'train': datasets.ImageFolder(dataset_uri['train'], data_transforms['train']),
-        'val': datasets.ImageFolder(dataset_uri['val'], data_transforms['val']),
-        'test': datasets.ImageFolder(dataset_uri['test'], data_transforms['test'])
-    }
-
-    dataloader = {
-        'train': torch.utils.data.DataLoader(dataset['train'], batch_size=batch_size, shuffle=True, num_workers=1),
-        'val': torch.utils.data.DataLoader(dataset['val'], batch_size=batch_size, shuffle=True, num_workers=1),
-        'test': torch.utils.data.DataLoader(dataset['test'], batch_size=batch_size, shuffle=True, num_workers=1),
-    }
-    class_names = dataset['train'].classes
-
-    print(f'Number of training examples: \t', len(dataset['train']))
-    print(f'Number of validation examples: \t', len(dataset['val']))
-    print(f'Number of testing examples: \t', len(dataset['test']))
-    print('Class labels: \t', class_names)
-
-    N_IMAGES = 25
-
-    images, labels = zip(*[(image, label) for image, label in
-                           [dataset['train'][i] for i in range(N_IMAGES)]])
-
-    # classes = dataset['train'].classes
-
-    plot_images(images, labels, class_names)
-    return dataloader, class_names
-
-
-def data_processing_val(batch_size=4):
-    VALID_RATIO = 0.9
-
-    pretrained_size = (224, 224)
-    pretrained_means = [0.485, 0.456, 0.406]
-    pretrained_stds = [0.229, 0.224, 0.225]
-
-    # Data Transformation and Augmentation
-    data_transforms = {
-        'train': transforms.Compose([
-            transforms.Resize(pretrained_size),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=pretrained_means,
-                                 std=pretrained_stds)
-        ]),
-        'test': transforms.Compose([
-            transforms.Resize(pretrained_size),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=pretrained_means,
-                                 std=pretrained_stds)
-        ]),
-        'val': transforms.Compose([
-            transforms.Resize(pretrained_size),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=pretrained_means,
-                                 std=pretrained_stds)
-        ])
-    }
-
-    dataset_uri = {
-        'train': '../AffectNet/train_class',
-        'test': '../AffectNet/test_class'
-    }
-    dataset = {
-        'train': datasets.ImageFolder(dataset_uri['train'], data_transforms['train']),
-        'test': datasets.ImageFolder(dataset_uri['test'], data_transforms['test'])
-    }
-
-    n_train_examples = int(len(dataset['train']) * VALID_RATIO)
-    n_valid_examples = len(dataset['train']) - n_train_examples
-
-    v1, v2 = data.random_split(dataset['train'], [n_train_examples, n_valid_examples])
-    dataset['train'], dataset['val'] = v1, v2
-
-    dataset['val'] = copy.deepcopy(dataset['val'])
-    dataset['val'].dataset.transform = data_transforms['val']
-
-    dataloader = {
-        'train': torch.utils.data.DataLoader(dataset['train'], batch_size=batch_size, shuffle=True, num_workers=1),
-        'val': torch.utils.data.DataLoader(dataset['val'], batch_size=batch_size, shuffle=True, num_workers=1),
-        'test': torch.utils.data.DataLoader(dataset['test'], batch_size=batch_size, shuffle=True, num_workers=1),
-    }
-    class_names = dataset['train'].dataset.classes
-
-    print(f'Number of training examples: \t', len(dataset['train']))
-    print(f'Number of validation examples: \t', len(dataset['val']))
-    print(f'Number of testing examples: \t', len(dataset['test']))
-    print('Class labels: \t', class_names)
-
-    N_IMAGES = 25
-
-    images, labels = zip(*[(image, label) for image, label in
-                           [dataset['train'][i] for i in range(N_IMAGES)]])
-
-    plot_images(images, labels, class_names)
-    return dataset, dataloader, class_names
 
 
 def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
@@ -374,31 +234,6 @@ def test_the_model(model, dataset, iterator, criterion=None, model_dst=model_dst
     # test_loss, test_acc = evaluate(model, dataset, iterator, criterion, device)
     test_loss, test_acc = evaluate(model, iterator, dataset_size_test, criterion, device)
     print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
-
-
-def get_predictions(model, iterator):
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model.eval()
-
-    images = []
-    labels = []
-    probs = []
-
-    with torch.no_grad():
-        for (x, y) in tqdm(iterator):
-            x = x.to(device)
-            y_pred, _ = model(x)
-            y_prob = F.softmax(y_pred, dim=-1)
-
-            images.append(x.cpu())
-            labels.append(y.cpu())
-            probs.append(y_prob.cpu())
-
-    images = torch.cat(images, dim=0)
-    labels = torch.cat(labels, dim=0)
-    probs = torch.cat(probs, dim=0)
-
-    return images, labels, probs
 
 
 def save_model(model, optimizer, criterion, model_file, epochs=0):
