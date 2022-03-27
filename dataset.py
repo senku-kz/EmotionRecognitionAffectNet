@@ -95,7 +95,7 @@ def sort_validation_images():
 
 
 def sort_images():
-    dataset_lst = ['train', 'val_set']
+    dataset_lst = ['train_set', 'val_set']
     folder_dst_lst = ['../dataset/train', '../dataset/validation']
     cnt = {}
     for dataset, folder_dst in zip(dataset_lst, folder_dst_lst):
