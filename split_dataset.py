@@ -8,7 +8,7 @@ from torchvision.io import read_image
 from torch.utils.data import Dataset
 
 from sqlAlchemy_db import HeadPositionTrain, HeadPositionValidation, session
-from parameters import folder_dst_lst, db_sql_file
+from parameters import folder_dst_lst, db_sql_file, batch_size
 
 
 class CustomImageDatasetFromSQLTrain(Dataset):
@@ -22,7 +22,7 @@ class CustomImageDatasetFromSQLTrain(Dataset):
         self.img_dir = img_dir
         self.transform = transform
         self.target_transform = target_transform
-        self.classes = 0 if self.img_labels.empty else np.sort(self.img_labels['class_idx'].unique())
+        self.classes = 0 if self.img_labels.empty else np.sort(self.img_labels['class_idx'].unique()).tolist()
         # if self.img_labels.empty:
         #     print('error')
 
@@ -92,7 +92,7 @@ def get_camera_position(dataset, position):
 
 
 def ds_train_validation_all():
-    batch_size = 8
+    # batch_size = 8
     pretrained_size = 224
     pretrained_means = [0.485, 0.456, 0.406]
     pretrained_stds = [0.229, 0.224, 0.225]
@@ -100,6 +100,7 @@ def ds_train_validation_all():
     # Data Transformation and Augmentation
     data_transforms = {
         'train': transforms.Compose([
+            transforms.ToPILImage(),
             transforms.Resize(pretrained_size),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
@@ -107,12 +108,14 @@ def ds_train_validation_all():
                                  std=pretrained_stds)
         ]),
         'test': transforms.Compose([
+            transforms.ToPILImage(),
             transforms.Resize(pretrained_size),
             transforms.ToTensor(),
             transforms.Normalize(mean=pretrained_means,
                                  std=pretrained_stds)
         ]),
         'validation': transforms.Compose([
+            transforms.ToPILImage(),
             transforms.Resize(pretrained_size),
             transforms.ToTensor(),
             transforms.Normalize(mean=pretrained_means,
@@ -126,7 +129,7 @@ def ds_train_validation_all():
     }
 
     # dataset_train = CustomImageDatasetFromSQL(cammera_position='Forward', img_dir=dataset_uri['train'], transform=data_transforms['train'])
-    dataset_train = CustomImageDatasetFromSQLTrain(cammera_position='all', img_dir=dataset_uri['train'])
+    dataset_train = CustomImageDatasetFromSQLTrain(cammera_position='all', img_dir=dataset_uri['train'], transform=data_transforms['train'])
     train_size = int(0.8 * len(dataset_train))
     test_size = len(dataset_train) - train_size
     train_dataset, test_dataset = torch.utils.data.random_split(dataset_train, [train_size, test_size])
@@ -155,9 +158,15 @@ def ds_train_validation_all():
     print(f'Number of testing examples: \t', len(dataset['test']))
     # print('Class labels: \t', class_names)
 
-    r_train_dataset = dataloader['train']
-    r_validation = dataloader['test']
-    return r_train_dataset, r_validation
+    r_dataset = {}
+    r_dataloader = {}
+
+    r_dataset['train'] = dataset['train']
+    r_dataset['validation'] = dataset['test']
+    r_dataloader['train'] = dataloader['train']
+    r_dataloader['validation'] = dataloader['test']
+    # return r_dataset_train, r_dataset_validation, r_dataloader_train, r_dataloader_validation, train_size, test_size
+    return r_dataset, r_dataloader
 
 
 def ds_test_cam(camera_position='all'):
@@ -169,6 +178,7 @@ def ds_test_cam(camera_position='all'):
     # Data Transformation and Augmentation
     data_transforms = {
         'train': transforms.Compose([
+            transforms.ToPILImage(),
             transforms.Resize(pretrained_size),
             transforms.RandomHorizontalFlip(),
             transforms.ToTensor(),
@@ -176,12 +186,14 @@ def ds_test_cam(camera_position='all'):
                                  std=pretrained_stds)
         ]),
         'test': transforms.Compose([
+            transforms.ToPILImage(),
             transforms.Resize(pretrained_size),
             transforms.ToTensor(),
             transforms.Normalize(mean=pretrained_means,
                                  std=pretrained_stds)
         ]),
         'validation': transforms.Compose([
+            transforms.ToPILImage(),
             transforms.Resize(pretrained_size),
             transforms.ToTensor(),
             transforms.Normalize(mean=pretrained_means,
@@ -216,11 +228,13 @@ def ds_test_cam(camera_position='all'):
     }
 
     # print(f'Number of training examples: \t', len(dataset['train']))
-    print(f'Number of validation examples: \t', len(dataset['validation']))
+    # print(f'Number of validation examples: \t', len(dataset['validation']))
+    print(f'Number of test examples: \t', len(dataset['validation']))
     # print(f'Number of testing examples: \t', len(dataset['test']))
     # print('Class labels: \t', class_names)
-    r_test_dataset = dataloader['validation']
-    return r_test_dataset
+    # r_dataset_test = dataset['validation']
+    # r_dataloader_test = dataloader['validation']
+    return dataset['validation'], dataloader['validation']
 
 
 if __name__ == '__main__':
