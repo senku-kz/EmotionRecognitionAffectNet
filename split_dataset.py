@@ -223,7 +223,7 @@ def ds_test_cam(camera_position='all'):
     }
 
     if dataset['validation'].img_labels.empty:
-        print('Validation Dataset id empty!')
+        print('Validation Dataset is empty!')
         return False, False
 
     dataloader = {
