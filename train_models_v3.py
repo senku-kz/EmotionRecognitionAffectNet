@@ -361,3 +361,4 @@ if __name__ == '__main__':
     # Hyper parameters are import from parameters.py
     model_coatnet()
     model_vgg()
+    print('Congratulations! Training completed successfully!')

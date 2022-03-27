@@ -11,7 +11,7 @@ folder_dst_dic = {i.split('/')[-1]: i for i in folder_dst_lst}
 # folder_dst_dic = {i.split('/')[-1]: i for i in folder_dst_lst}
 
 # for train models
-batch_size = 8
+batch_size = 4
 epoch_number = 1
 learning_rate = 0.001
 
