@@ -48,7 +48,7 @@ class CustomImageDatasetFromSQLValidation(Dataset):
         con = sqlite3.connect(db_sql_file)
         if cammera_position == 'all':
             smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__}'
-            smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__} limit 1000'
+            smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__} limit 10000'
         else:
             smtm = f'SELECT filename, class_label from {HeadPositionValidation.__tablename__} where camera_label = "{cammera_position}"'
         self.img_labels = pd.read_sql_query(smtm, con)
