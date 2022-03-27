@@ -1,6 +1,7 @@
 import os
 import sqlite3
 import pandas as pd
+import numpy as np
 import torch
 import torchvision.transforms as transforms
 from torchvision.io import read_image
@@ -21,8 +22,9 @@ class CustomImageDatasetFromSQLTrain(Dataset):
         self.img_dir = img_dir
         self.transform = transform
         self.target_transform = target_transform
-        if self.img_labels.empty:
-            print('error')
+        self.classes = 0 if self.img_labels.empty else np.sort(self.img_labels['class_idx'].unique())
+        # if self.img_labels.empty:
+        #     print('error')
 
     def __len__(self):
         return len(self.img_labels)
@@ -45,6 +47,7 @@ class CustomImageDatasetFromSQLValidation(Dataset):
     def __init__(self, cammera_position, img_dir, transform=None, target_transform=None):
         con = sqlite3.connect(db_sql_file)
         if cammera_position == 'all':
+            smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__}'
             smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__} limit 1000'
         else:
             smtm = f'SELECT filename, class_label from {HeadPositionValidation.__tablename__} where camera_label = "{cammera_position}"'
@@ -52,6 +55,7 @@ class CustomImageDatasetFromSQLValidation(Dataset):
         self.img_dir = img_dir
         self.transform = transform
         self.target_transform = target_transform
+        self.classes = 0 if self.img_labels.empty else np.sort(self.img_labels['class_idx'].unique())
         # if self.img_labels.empty:
         #     print('Error, Set is emty')
 
@@ -224,6 +228,6 @@ if __name__ == '__main__':
     # v_dataset = 'validation'
     v_position = 'Forward'
     # ds_front = get_camera_position(v_dataset, v_position)
-    # ds_train_validation_all()
-    ds_test_cam(camera_position='all')
-    ds_test_cam(camera_position=v_position)
+    ds_train_validation_all()
+    # ds_test_cam(camera_position='all')
+    # ds_test_cam(camera_position=v_position)
