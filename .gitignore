@@ -7,3 +7,4 @@ __pycache__/
 *.tar.gz
 
 !models_trained/sqlite3.db
+/model_trained/
