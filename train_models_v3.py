@@ -356,9 +356,10 @@ def epoch_time(start_time, end_time):
     return elapsed_mins, elapsed_secs
 
 
-def test_the_model(model, dataset, iterator, criterion=None, device='cuda:0', model_dst='./models_trained'):
+def test_the_model(model, dataset, iterator, criterion=None, model_dst=model_dst):
     dataset_size_test = len(dataset)
     model_file_url = os.path.join(model_dst, '%s_final.pt' % model.model_name)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     # =================
     if criterion is None:
         criterion = nn.CrossEntropyLoss()
@@ -400,7 +401,7 @@ def get_predictions(model, iterator):
     return images, labels, probs
 
 
-def save_model(model, optimizer, criterion, model_file, epochs = 0):
+def save_model(model, optimizer, criterion, model_file, epochs=0):
     # Save final model
     torch.save({
         'model_state_dict': model.state_dict(),
@@ -411,7 +412,7 @@ def save_model(model, optimizer, criterion, model_file, epochs = 0):
     print('Model saved', model_file)
 
 
-def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, device='cuda:0', model_dst='./models_trained'):
+def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, model_dst=model_dst):
     mini_batches = 50
     classes_idx = dataset.classes
     emotions = [
@@ -486,8 +487,8 @@ def model_coatnet():
 
     # Test model
     v_dataset_test, v_dataloader_test = ds_test_cam('all')
-    test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, device='cuda:0', model_dst=model_dst)
-    test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, device='cuda:0', model_dst=model_dst)
+    test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
+    test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
 
 
 def model_vgg():
@@ -500,8 +501,8 @@ def model_vgg():
 
     # Test model
     v_dataset_test, v_dataloader_test = ds_test_cam('all')
-    test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, device='cuda:0', model_dst=model_dst)
-    test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, device='cuda:0', model_dst=model_dst)
+    test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
+    test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
 
     # v_dataset, v_dataloader, v_classes = data_processing_val(batch_size=batch_size)
     # v_model = VGG(in_channels=3, num_classes=len(v_classes))
@@ -512,10 +513,6 @@ def model_vgg():
 
 
 if __name__ == '__main__':
-    # batch_size = 12
-    # epoch_number = 20
-    # learning_rate = 5e-4
-    # learning_rate = 0.001
-
+    # Hyper parameters imported from parameters.py
     model_coatnet()
-    # model_vgg()
+    model_vgg()
