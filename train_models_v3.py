@@ -15,7 +15,7 @@ from models.VGG import VGG
 from models.CoAtNet import coatnet_0
 
 from split_dataset import ds_train_validation_all, ds_test_cam
-from parameters import epoch_number, learning_rate, model_dst
+from parameters import epoch_number, learning_rate, model_dst, CUDA_N
 from discrete_categories import camera_positions
 
 
@@ -73,7 +73,7 @@ def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
     dataset_size_train = len(dataset['train'])
     dataset_size_validation = len(dataset['validation'])
 
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device(CUDA_N if torch.cuda.is_available() else 'cpu')
     print('Using device: {}'.format(device))
     #
     model = model.to(device)
@@ -220,7 +220,7 @@ def epoch_time(start_time, end_time):
 def test_the_model(model, dataset, iterator, criterion=None, model_dst=model_dst):
     dataset_size_test = len(dataset)
     model_file_url = os.path.join(model_dst, '%s_final.pt' % model.model_name)
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device(CUDA_N if torch.cuda.is_available() else 'cpu')
     # =================
     if criterion is None:
         criterion = nn.CrossEntropyLoss()
@@ -265,7 +265,7 @@ def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, mod
         'No-Face',
     ]
 
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device(CUDA_N if torch.cuda.is_available() else 'cpu')
     # print('Using device: {}'.format(device))
 
     # for camera_position in camera_positions:
@@ -355,7 +355,7 @@ def model_vgg():
     # v_model = VGG(in_channels=3, num_classes=len(v_classes))
     # print('Trained model name is:', v_model.model_name)
     # training_the_model(v_model, v_dataset, v_dataloader, v_classes, epoch_num=epoch_number, lr=learning_rate)
-    # # test_the_model(v_model, v_dataset['test'], v_dataloader['test'], criterion=None, device='cuda:0', model_dst='./models_trained')
+    # # test_the_model(v_model, v_dataset['test'], v_dataloader['test'], criterion=None, device=CUDA_N, model_dst='./models_trained')
     # test_model_separate_accuracy(v_model, batch_size, '../train_class', model_dst='./models_trained')
 
 

@@ -27,13 +27,15 @@ docker run -it python:3.9.0
 
 cd docker/
 # docker build .
-docker build -t emotion_recognition_env:latest .
+docker build -t emotion_recognition_env:gpu .
 
 # docker run --rm --name emotion -v ${PWD}:/app emotion_recognition_env
 # docker run --rm --name emotion -ti -v ${PWD}:/app emotion_recognition_env bash
 # docker run --rm --name emotion -d -v ${PWD}:/app emotion_recognition_env tail -f /dev/null
 # docker run --rm --name emotion -ti -v ${PWD}:/app emotion_recognition_env
 docker run --rm --name emotion -d -v ${PWD}:/app emotion_recognition_env
+
+docker run --rm --gpus device=0 --name emotion -d -v ${PWD}:/app emotion_recognition_env
 
 
 docker exec -it emotion bash
@@ -46,6 +48,10 @@ docker run --name sqlite -d -v ${PWD}:/app create_sqlite
 
 docker save emotion_recognition_env > emotion_recognition_env.tar
 docker load < emotion_recognition_env.tar
+
+
+docker save emotion_recognition_env:gpu > emotion_recognition_env_gpu.tar
+docker load < emotion_recognition_env_gpu.tar
 
 
 https://devopscube.com/keep-docker-container-running/
