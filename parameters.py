@@ -10,6 +10,8 @@ folder_dst_dic = {i.split('/')[-1]: i for i in folder_dst_lst}
 # folder_dst_lst = ['../dataset/validation']
 # folder_dst_dic = {i.split('/')[-1]: i for i in folder_dst_lst}
 
+CUDA_N = 'cuda:5'
+
 # for train models
 batch_size = 4
 epoch_number = 1
