@@ -8,3 +8,5 @@ __pycache__/
 
 !models_trained/sqlite3.db
 /model_trained/
+/_model_trained/
+/_models_trained/
