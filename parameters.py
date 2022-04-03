@@ -14,7 +14,7 @@ CUDA_N = 'cuda'
 
 # for train models
 batch_size = 4
-epoch_number = 1
+epoch_number = 5
 learning_rate = 0.001
 
 LIMIT_DATASET = 100
@@ -23,4 +23,4 @@ LIMIT_DATASET = 100
 SPLIT_TRAIN_SET = 0.8
 
 # model_dst = '../dataset/model_trained'
-model_dst = './model_trained'
+model_dst = './models_trained'

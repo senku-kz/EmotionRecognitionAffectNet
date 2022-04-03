@@ -76,6 +76,7 @@ class ResNet(nn.Module):
         self.layer4 = self._make_layer(
             block, layers[3], intermediate_channels=512, stride=2
         )
+        self.model_name = 'ResNet'
 
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
         self.fc = nn.Linear(512 * 4, num_classes)

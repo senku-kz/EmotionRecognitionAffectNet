@@ -174,8 +174,12 @@ def ds_train_validation_all():
     return r_dataset, r_dataloader
 
 
+def ds_test_all():
+    return ds_test_cam(camera_position='all')
+
+
 def ds_test_cam(camera_position='all'):
-    batch_size = 8
+    # batch_size = 8
     pretrained_size = 224
     pretrained_means = [0.485, 0.456, 0.406]
     pretrained_stds = [0.229, 0.224, 0.225]
@@ -247,6 +251,7 @@ if __name__ == '__main__':
     # v_dataset = 'validation'
     v_position = 'Forward'
     # ds_front = get_camera_position(v_dataset, v_position)
-    ds_train_validation_all()
+    # ds_train_validation_all()
+    ds_test_all()
     # ds_test_cam(camera_position='all')
     # ds_test_cam(camera_position=v_position)

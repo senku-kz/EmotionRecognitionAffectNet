@@ -13,6 +13,7 @@ import numpy as np
 
 from models.VGG import VGG
 from models.CoAtNet import coatnet_0
+from models.ResNet import ResNet50
 
 from split_dataset import ds_train_validation_all, ds_test_cam
 from parameters import epoch_number, learning_rate, model_dst, CUDA_N
@@ -118,6 +119,8 @@ def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
             if not os.path.exists(model_dst):
                 os.makedirs(model_dst)
             save_model(model, optimizer, criterion, os.path.join(model_dst, '%s_tmp.pt' % model.model_name), epoch)
+            training_indicates(model, log_train_accuracy, log_train_loss, log_valid_accuracy, log_valid_loss,
+                               step='tmp')
 
         end_time = time.monotonic()
 
@@ -132,10 +135,38 @@ def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
         os.makedirs(model_dst)
     save_model(model, optimizer, criterion, os.path.join(model_dst, '%s_final.pt' % model.model_name), epoch_num)
 
-    ta_file = os.path.join(model_dst, 'total_train_accuracy_%s.txt' % (model.model_name))
-    tl_file = os.path.join(model_dst, 'total_train_loss_%s.txt' % (model.model_name))
-    va_file = os.path.join(model_dst, 'total_valid_accuracy_%s.txt' % (model.model_name))
-    vl_file = os.path.join(model_dst, 'total_valid_loss_%s.txt' % (model.model_name))
+    training_indicates(model, log_train_accuracy, log_train_loss, log_valid_accuracy, log_valid_loss, step='final')
+
+    # ta_file = os.path.join(model_dst, 'total_train_%s_accuracy.txt' % (model.model_name))
+    # tl_file = os.path.join(model_dst, 'total_train_%s_loss.txt' % (model.model_name))
+    # va_file = os.path.join(model_dst, 'total_valid_%s_accuracy.txt' % (model.model_name))
+    # vl_file = os.path.join(model_dst, 'total_valid_%s_loss.txt' % (model.model_name))
+    #
+    # with open(ta_file, 'w') as total_accuracy_file:
+    #     total_accuracy_file.write('\n'.join(['{:.4f}'.format(x) for x in log_train_accuracy]))
+    #     # total_accuracy_file.write('\n'.join(total_accuracy))
+    #
+    # with open(tl_file, 'w') as total_loss_file:
+    #     total_loss_file.write('\n'.join(['{:.4f}'.format(x) for x in log_train_loss]))
+    #     # total_loss_file.write('\n'.join(total_loss))
+    #
+    # with open(va_file, 'w') as total_accuracy_file:
+    #     total_accuracy_file.write('\n'.join(['{:.4f}'.format(x) for x in log_valid_accuracy]))
+    #     # total_accuracy_file.write('\n'.join(total_accuracy))
+    #
+    # with open(vl_file, 'w') as total_loss_file:
+    #     total_loss_file.write('\n'.join(['{:.4f}'.format(x) for x in log_valid_loss]))
+    #     # total_loss_file.write('\n'.join(total_loss))
+    #
+    # # test_the_model(model, dataset['test'], dataloader['test'], criterion, device)
+    pass
+
+
+def training_indicates(model, log_train_accuracy, log_train_loss, log_valid_accuracy, log_valid_loss, step='final'):
+    ta_file = os.path.join(model_dst, 'total_train_%s_accuracy_%s.txt' % (model.model_name, step))
+    tl_file = os.path.join(model_dst, 'total_train_%s_loss_%s.txt' % (model.model_name, step))
+    va_file = os.path.join(model_dst, 'total_valid_%s_accuracy_%s.txt' % (model.model_name, step))
+    vl_file = os.path.join(model_dst, 'total_valid_%s_loss_%s.txt' % (model.model_name, step))
 
     with open(ta_file, 'w') as total_accuracy_file:
         total_accuracy_file.write('\n'.join(['{:.4f}'.format(x) for x in log_train_accuracy]))
@@ -152,9 +183,6 @@ def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
     with open(vl_file, 'w') as total_loss_file:
         total_loss_file.write('\n'.join(['{:.4f}'.format(x) for x in log_valid_loss]))
         # total_loss_file.write('\n'.join(total_loss))
-
-    # test_the_model(model, dataset['test'], dataloader['test'], criterion, device)
-    pass
 
 
 def train_one_step(model, dataloader, sample_size, optimizer, criterion, device):
@@ -227,6 +255,8 @@ def test_the_model(model, dataset, iterator, criterion=None, model_dst=model_dst
         criterion = criterion.to(device)
         model = model.to(device)
     # =================
+
+    q = os.path.exists(model_file_url)
 
     loaded_file = torch.load(model_file_url)
     model.load_state_dict(loaded_file['model_state_dict'])
@@ -359,8 +389,35 @@ def model_vgg():
     # test_model_separate_accuracy(v_model, batch_size, '../train_class', model_dst='./models_trained')
 
 
+def model_resnet():
+    # Train and validate model
+    v_dataset, v_dataloader = ds_train_validation_all()
+    v_classes = v_dataset['train'].dataset.classes
+    v_model = ResNet50(img_channel=3, num_classes=len(v_classes))
+    print('='*60)
+    print('Trained model name is:', v_model.model_name)
+    training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
+
+    # Test model
+    v_dataset_test, v_dataloader_test = ds_test_cam('all')
+    test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
+    test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera='all')
+
+    for camera in camera_positions:
+        v_dataset_test, v_dataloader_test = ds_test_cam(camera)
+        if v_dataset_test and v_dataloader_test:
+            test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera=camera)
+    # v_dataset, v_dataloader, v_classes = data_processing_val(batch_size=batch_size)
+    # v_model = VGG(in_channels=3, num_classes=len(v_classes))
+    # print('Trained model name is:', v_model.model_name)
+    # training_the_model(v_model, v_dataset, v_dataloader, v_classes, epoch_num=epoch_number, lr=learning_rate)
+    # # test_the_model(v_model, v_dataset['test'], v_dataloader['test'], criterion=None, device=CUDA_N, model_dst='./models_trained')
+    # test_model_separate_accuracy(v_model, batch_size, '../train_class', model_dst='./models_trained')
+
+
 if __name__ == '__main__':
     # Hyper parameters are import from parameters.py
-    model_coatnet()
-    model_vgg()
+    # model_coatnet()
+    # model_vgg()
+    model_resnet()
     print('Congratulations! Training completed successfully!')
