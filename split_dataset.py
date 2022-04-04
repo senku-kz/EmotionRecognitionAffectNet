@@ -58,6 +58,7 @@ class CustomImageDatasetFromSQLValidation(Dataset):
             smtm = f'SELECT filename, class_label from {HeadPositionValidation.__tablename__} where camera_label = "{cammera_position}"'
         self.img_labels = pd.read_sql_query(smtm, con)
         self.img_dir = img_dir
+        # self.name = None
         self.transform = transform
         self.target_transform = target_transform
         self.classes = 0 if self.img_labels.empty else np.sort(self.img_labels['class_idx'].unique())
@@ -72,12 +73,14 @@ class CustomImageDatasetFromSQLValidation(Dataset):
         img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
         image = read_image(img_path)
         label = self.img_labels.iloc[idx, 1]
+        name = self.img_labels.iloc[idx, 0]
         if self.transform:
             image = self.transform(image)
         if self.target_transform:
             label = self.target_transform(label)
         self.image = image
         self.label = label
+        self.name = name
         return image, label
 
 
