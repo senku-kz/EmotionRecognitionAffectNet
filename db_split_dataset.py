@@ -61,9 +61,15 @@ class CustomImageDatasetFromSQLValidation(Dataset):
         # self.name = None
         self.transform = transform
         self.target_transform = target_transform
+
         self.classes = 0 if self.img_labels.empty else np.sort(self.img_labels['class_idx'].unique())
-        # if self.img_labels.empty:
-        #     print('Error, Set is emty')
+        if self.img_labels.empty:
+            self.classes = 0
+        else:
+            if 'class_idx' in self.img_labels:
+                self.classes = np.sort(self.img_labels['class_idx'].unique())
+            if 'class_label' in self.img_labels:
+                self.classes = np.sort(self.img_labels['class_label'].unique())
 
     def __len__(self):
         return len(self.img_labels)
