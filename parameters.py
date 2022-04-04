@@ -1,5 +1,6 @@
 
-db_sql_file = '../dataset/sqlite3.db'
+# db_sql_file = '../dataset/sqlite3.db'
+db_sql_file = './models_trained/sqlite3.db'
 dataset_lst = ['train_set', 'val_set']
 folder_dst_lst = ['../dataset/train', '../dataset/validation']
 # folder_dst_dic = {k: v for k, v in zip(dataset_lst, folder_dst_lst)}
