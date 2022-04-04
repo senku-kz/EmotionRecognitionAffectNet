@@ -7,6 +7,9 @@ python db_add_head_position_information.py
 
 python models_train.py
 
+python models_test.py
+
+python models_plot.py
 
 ## for venv
 pip freeze > requirements.txt
