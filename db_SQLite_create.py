@@ -1,7 +1,7 @@
 import os
 import shutil
 import numpy as np
-from insert_records_into_sql import insert_filenames
+from db_insert_records_into_sql import insert_filenames
 from parameters import dataset_lst, folder_dst_lst
 
 

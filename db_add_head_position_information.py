@@ -7,7 +7,7 @@ from torchvision import datasets, transforms
 from torchvision.io import read_image
 from deep_head_pose import hopenet, utils
 from torch.utils.data import Dataset
-from sqlAlchemy_db import session, HeadPositionTrain, HeadPositionValidation, HeadPositionTest
+from db_sqlAlchemy import session, HeadPositionTrain, HeadPositionValidation, HeadPositionTest
 from parameters import CUDA_N
 
 """
