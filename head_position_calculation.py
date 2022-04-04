@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from HeadPoseEstimation import headPoseEstimation
 
-from sqlAlchemy_db import session, HeadPositionTrain, HeadPositionTest, HeadPositionValidation
+from db_sqlAlchemy import session, HeadPositionTrain, HeadPositionTest, HeadPositionValidation
 
 """pip install SQLAlchemy"""
 

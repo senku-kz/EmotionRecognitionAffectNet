@@ -1,7 +1,7 @@
 from discrete_categories import camera_positions
 from models_train import test_the_model, test_model_separate_accuracy
 from parameters import model_dst
-from split_dataset import ds_test_cam
+from db_split_dataset import ds_test_cam
 
 from models.VGG import VGG
 from models.CoAtNet import coatnet_0

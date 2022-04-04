@@ -1,4 +1,4 @@
-from sqlAlchemy_db import session, HeadPositionTrain, HeadPositionTest, HeadPositionValidation
+from db_sqlAlchemy import session, HeadPositionTrain, HeadPositionTest, HeadPositionValidation
 
 
 def insert_filenames(dataset='train', filename='test.img', class_idx=-1, class_label='test'):
