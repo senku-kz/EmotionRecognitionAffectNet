@@ -19,6 +19,7 @@ from db_split_dataset import ds_train_validation_all, ds_test_cam
 from parameters import epoch_number, learning_rate, model_dst, CUDA_N
 from discrete_categories import camera_positions
 
+from my_loger import logging
 
 def normalize_image(image):
     image_min = image.min()
@@ -75,7 +76,7 @@ def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
     dataset_size_validation = len(dataset['validation'])
 
     device = torch.device(CUDA_N if torch.cuda.is_available() else 'cpu')
-    print('Using device: {}'.format(device))
+    logging.info('Using device: {}'.format(device))
     #
     model = model.to(device)
     # model_dst = './models_trained'
@@ -126,10 +127,10 @@ def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
 
         epoch_mins, epoch_secs = epoch_time(start_time, end_time)
 
-        print(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
-        print(f'\tTrain Loss: {train_loss:.3f} \t | Train Acc: {train_acc * 100:.2f}%')
-        print(f'\tVal. Loss: {valid_loss:.3f} \t | Val. Acc: {valid_acc * 100:.2f}%')
-        print('='*20)
+        logging.info(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
+        logging.info(f'\tTrain Loss: {train_loss:.3f} \t | Train Acc: {train_acc * 100:.2f}%')
+        logging.info(f'\tVal. Loss: {valid_loss:.3f} \t | Val. Acc: {valid_acc * 100:.2f}%')
+        logging.info('='*20)
 
     if not os.path.exists(model_dst):
         os.makedirs(model_dst)
@@ -211,7 +212,7 @@ def train_one_step(model, dataloader, sample_size, optimizer, criterion, device)
         epoch_acc += torch.sum(y_pred == y.data)
         epoch_loss += loss.item()
         if i % mini_batches == mini_batches - 1:  # print every 2000 mini-batches
-            print(f'[Batch: {i + 1:5d}] \t Accuracy: {running_acc / (y.shape[0] * mini_batches):.6f} \t Loss: {running_loss / (y.shape[0] * mini_batches):.6f}')
+            logging.info(f'[Batch: {i + 1:5d}] \t Accuracy: {running_acc / (y.shape[0] * mini_batches):.6f} \t Loss: {running_loss / (y.shape[0] * mini_batches):.6f}')
             running_acc = 0.0
             running_loss = 0.0
 
@@ -256,15 +257,13 @@ def test_the_model(model, dataset, iterator, criterion=None, model_dst=model_dst
         model = model.to(device)
     # =================
 
-    q = os.path.exists(model_file_url)
-
     loaded_file = torch.load(model_file_url)
     model.load_state_dict(loaded_file['model_state_dict'])
 
     # model.load_state_dict(torch.load('tut4-model.pt'))
     # test_loss, test_acc = evaluate(model, dataset, iterator, criterion, device)
     test_loss, test_acc = evaluate(model, iterator, dataset_size_test, criterion, device)
-    print(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
+    logging.info(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
 
 
 def save_model(model, optimizer, criterion, model_file, epochs=0):
@@ -275,7 +274,7 @@ def save_model(model, optimizer, criterion, model_file, epochs=0):
         'loss': criterion,
         'epochs': epochs
     }, model_file)
-    print('Model saved', model_file)
+    logging.info('Model saved', model_file)
 
 
 def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, model_dst=model_dst, camera='all'):
@@ -290,9 +289,9 @@ def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, mod
         'Disgust',
         'Anger',
         'Contempt',
-        'None',
-        'Uncertain',
-        'No-Face',
+        # 'None',
+        # 'Uncertain',
+        # 'No-Face',
     ]
 
     device = torch.device(CUDA_N if torch.cuda.is_available() else 'cpu')
@@ -323,16 +322,16 @@ def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, mod
                 total_pred[emotions[label]] += 1
 
             if i % mini_batches == mini_batches - 1:  # print every 2000 mini-batches
-                print(f'[Batch: {i + 1:5d}] \t {correct_pred}')
+                logging.info(f'[Batch: {i + 1:5d}] \t {correct_pred}')
 
     # print accuracy for each class
-    print('='*20, camera, 'position(s)', '='*20)
+    logging.info('%s %s %s %s' % ('='*20, camera, 'position(s)', '='*20))
     for classname, correct_count in correct_pred.items():
         if total_pred[classname] != 0:
             accuracy = 100 * float(correct_count) / total_pred[classname]
-            print(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
+            logging.info(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
         else:
-            print(f'Accuracy for class: {classname:5s} not available')
+            logging.info(f'Accuracy for class: {classname:5s} not available')
 
     s1_file = os.path.join(model_dst, 'emotion_correct_%s_%s.txt' % (model.model_name, camera))
     with open(s1_file, 'w') as file:
@@ -348,8 +347,8 @@ def model_coatnet():
     v_dataset, v_dataloader = ds_train_validation_all()
     v_classes = v_dataset['train'].dataset.classes
     v_model = coatnet_0(num_classes=len(v_classes))
-    print('='*60)
-    print('Trained model name is:', v_model.model_name)
+    logging.info('='*60)
+    logging.info('Trained model name is:', v_model.model_name)
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
     # Test model
@@ -368,8 +367,8 @@ def model_vgg():
     v_dataset, v_dataloader = ds_train_validation_all()
     v_classes = v_dataset['train'].dataset.classes
     v_model = VGG(in_channels=3, num_classes=len(v_classes))
-    print('='*60)
-    print('Trained model name is:', v_model.model_name)
+    logging.info('='*60)
+    logging.info('Trained model name is:', v_model.model_name)
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
     # Test model
@@ -394,8 +393,8 @@ def model_resnet():
     v_dataset, v_dataloader = ds_train_validation_all()
     v_classes = v_dataset['train'].dataset.classes
     v_model = ResNet50(img_channel=3, num_classes=len(v_classes))
-    print('='*60)
-    print('Trained model name is:', v_model.model_name)
+    logging.info('='*60)
+    logging.info('Trained model name is:', v_model.model_name)
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
     # Test model
@@ -420,4 +419,4 @@ if __name__ == '__main__':
     # model_coatnet()
     # model_vgg()
     model_resnet()
-    print('Congratulations! Training completed successfully!')
+    logging.info('Congratulations! Training completed successfully!')

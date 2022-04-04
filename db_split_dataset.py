@@ -55,14 +55,15 @@ class CustomImageDatasetFromSQLValidation(Dataset):
             else:
                 smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__} limit {LIMIT_DATASET}'
         else:
-            smtm = f'SELECT filename, class_label from {HeadPositionValidation.__tablename__} where camera_label = "{cammera_position}"'
+            # smtm = f'SELECT filename, class_label from {HeadPositionValidation.__tablename__} where camera_label = "{cammera_position}"'
+            smtm = f'SELECT filename, class_idx from {HeadPositionValidation.__tablename__} where camera_label = "{cammera_position}"'
         self.img_labels = pd.read_sql_query(smtm, con)
         self.img_dir = img_dir
         # self.name = None
         self.transform = transform
         self.target_transform = target_transform
 
-        self.classes = 0 if self.img_labels.empty else np.sort(self.img_labels['class_idx'].unique())
+        # self.classes = 0 if self.img_labels.empty else np.sort(self.img_labels['class_idx'].unique())
         if self.img_labels.empty:
             self.classes = 0
         else:
@@ -224,11 +225,6 @@ def ds_test_cam(camera_position='all'):
         'validation': '../data/val_set/images'
     }
 
-    # dataset_train = CustomImageDatasetFromSQL(cammera_position='Forward', img_dir=dataset_uri['train'])
-    # train_size = int(0.8 * len(dataset_train))
-    # test_size = len(dataset_train) - train_size
-    # train_dataset, test_dataset = torch.utils.data.random_split(dataset_train, [train_size, test_size])
-
     dataset = {
         # 'train': train_dataset,
         'validation': CustomImageDatasetFromSQLValidation(cammera_position=camera_position, img_dir=dataset_uri['validation'], transform=data_transforms['validation']),
@@ -247,7 +243,7 @@ def ds_test_cam(camera_position='all'):
 
     # print(f'Number of training examples: \t', len(dataset['train']))
     # print(f'Number of validation examples: \t', len(dataset['validation']))
-    print(f'Number of test examples: \t', len(dataset['validation']))
+    # print(f'Number of test examples: \t', len(dataset['validation']))
     # print(f'Number of testing examples: \t', len(dataset['test']))
     # print('Class labels: \t', class_names)
     # r_dataset_test = dataset['validation']
