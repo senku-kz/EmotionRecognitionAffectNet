@@ -21,6 +21,7 @@ from discrete_categories import camera_positions
 
 from my_loger import logging
 
+
 def normalize_image(image):
     image_min = image.min()
     image_max = image.max()
@@ -342,78 +343,6 @@ def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, mod
         file.write('\n'.join([f'{k}\t{v}' for k, v in total_pred.items()]))
 
 
-# def model_coatnet():
-#     # Train and validate model
-#     v_dataset, v_dataloader = ds_train_validation_all()
-#     v_classes = v_dataset['train'].dataset.classes
-#     v_model = coatnet_0(num_classes=len(v_classes))
-#     logging.info('='*60)
-#     logging.info(f'Trained model name is: {v_model.model_name}')
-#     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
-#
-#     # Test model
-#     camera = 'all'
-#     v_dataset_test, v_dataloader_test = ds_test_cam(camera)
-#     test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
-#
-#     for camera in camera_positions:
-#         v_dataset_test, v_dataloader_test = ds_test_cam(camera)
-#         if v_dataset_test and v_dataloader_test:
-#             test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera=camera)
-#
-#
-# def model_vgg():
-#     # Train and validate model
-#     v_dataset, v_dataloader = ds_train_validation_all()
-#     v_classes = v_dataset['train'].dataset.classes
-#     v_model = VGG(in_channels=3, num_classes=len(v_classes))
-#     logging.info('='*60)
-#     logging.info(f'Trained model name is: {v_model.model_name}')
-#     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
-#
-#     # Test model
-#     v_dataset_test, v_dataloader_test = ds_test_cam('all')
-#     test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
-#     test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera='all')
-#
-#     for camera in camera_positions:
-#         v_dataset_test, v_dataloader_test = ds_test_cam(camera)
-#         if v_dataset_test and v_dataloader_test:
-#             test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera=camera)
-#     # v_dataset, v_dataloader, v_classes = data_processing_val(batch_size=batch_size)
-#     # v_model = VGG(in_channels=3, num_classes=len(v_classes))
-#     # print('Trained model name is:', v_model.model_name)
-#     # training_the_model(v_model, v_dataset, v_dataloader, v_classes, epoch_num=epoch_number, lr=learning_rate)
-#     # # test_the_model(v_model, v_dataset['test'], v_dataloader['test'], criterion=None, device=CUDA_N, model_dst='./models_trained')
-#     # test_model_separate_accuracy(v_model, batch_size, '../train_class', model_dst='./models_trained')
-#
-#
-# def model_resnet():
-#     # Train and validate model
-#     v_dataset, v_dataloader = ds_train_validation_all()
-#     v_classes = v_dataset['train'].dataset.classes
-#     v_model = ResNet50(img_channel=3, num_classes=len(v_classes))
-#     logging.info('='*60)
-#     logging.info(f'Trained model name is: {v_model.model_name}')
-#     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
-#
-#     # Test model
-#     v_dataset_test, v_dataloader_test = ds_test_cam('all')
-#     test_the_model(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst)
-#     test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera='all')
-#
-#     for camera in camera_positions:
-#         v_dataset_test, v_dataloader_test = ds_test_cam(camera)
-#         if v_dataset_test and v_dataloader_test:
-#             test_model_separate_accuracy(v_model, v_dataset_test, v_dataloader_test, criterion=None, model_dst=model_dst, camera=camera)
-#     # v_dataset, v_dataloader, v_classes = data_processing_val(batch_size=batch_size)
-#     # v_model = VGG(in_channels=3, num_classes=len(v_classes))
-#     # print('Trained model name is:', v_model.model_name)
-#     # training_the_model(v_model, v_dataset, v_dataloader, v_classes, epoch_num=epoch_number, lr=learning_rate)
-#     # # test_the_model(v_model, v_dataset['test'], v_dataloader['test'], criterion=None, device=CUDA_N, model_dst='./models_trained')
-#     # test_model_separate_accuracy(v_model, batch_size, '../train_class', model_dst='./models_trained')
-
-
 def run_models(model_type):
     # Train and validate model
     v_dataset, v_dataloader = ds_train_validation_all()
@@ -444,12 +373,9 @@ def run_models(model_type):
 
 if __name__ == '__main__':
     # Hyper parameters are import from parameters.py
-    # model_coatnet()
-    # model_vgg()
-    # model_resnet()
     run_models('ResNet')
 
-    model_type_lst = ['CoAtNet', 'ResNet', 'VGG']
-    for i in model_type_lst:
-        run_models(i)
+    # model_type_lst = ['CoAtNet', 'ResNet', 'VGG']
+    # for i in model_type_lst:
+    #     run_models(i)
     logging.info('Congratulations! Training completed successfully!')
