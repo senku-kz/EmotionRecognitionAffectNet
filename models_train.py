@@ -130,7 +130,7 @@ def training_the_model(model, dataset, dataloader, epoch_num=1, lr=5e-4):
         logging.info(f'Epoch: {epoch + 1:02} | Epoch Time: {epoch_mins}m {epoch_secs}s')
         logging.info(f'\tTrain Loss: {train_loss:.3f} \t | Train Acc: {train_acc * 100:.2f}%')
         logging.info(f'\tVal. Loss: {valid_loss:.3f} \t | Val. Acc: {valid_acc * 100:.2f}%')
-        logging.info('='*20)
+        logging.info('-'*20)
 
     if not os.path.exists(model_dst):
         os.makedirs(model_dst)
@@ -274,7 +274,7 @@ def save_model(model, optimizer, criterion, model_file, epochs=0):
         'loss': criterion,
         'epochs': epochs
     }, model_file)
-    logging.info('Model saved', model_file)
+    logging.info(f'Model saved {model_file}')
 
 
 def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, model_dst=model_dst, camera='all'):
@@ -348,7 +348,7 @@ def model_coatnet():
     v_classes = v_dataset['train'].dataset.classes
     v_model = coatnet_0(num_classes=len(v_classes))
     logging.info('='*60)
-    logging.info('Trained model name is:', v_model.model_name)
+    logging.info(f'Trained model name is: {v_model.model_name}')
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
     # Test model
@@ -368,7 +368,7 @@ def model_vgg():
     v_classes = v_dataset['train'].dataset.classes
     v_model = VGG(in_channels=3, num_classes=len(v_classes))
     logging.info('='*60)
-    logging.info('Trained model name is:', v_model.model_name)
+    logging.info(f'Trained model name is: {v_model.model_name}')
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
     # Test model
@@ -394,7 +394,7 @@ def model_resnet():
     v_classes = v_dataset['train'].dataset.classes
     v_model = ResNet50(img_channel=3, num_classes=len(v_classes))
     logging.info('='*60)
-    logging.info('Trained model name is:', v_model.model_name)
+    logging.info(f'Trained model name is: {v_model.model_name}')
     training_the_model(v_model, v_dataset, v_dataloader, epoch_num=epoch_number, lr=learning_rate)
 
     # Test model
