@@ -15,7 +15,7 @@ from models.VGG import VGG
 from models.CoAtNet import coatnet_0
 from models.ResNet import ResNet50
 
-from split_dataset import ds_train_validation_all, ds_test_cam
+from db_split_dataset import ds_train_validation_all, ds_test_cam
 from parameters import epoch_number, learning_rate, model_dst, CUDA_N
 from discrete_categories import camera_positions
 

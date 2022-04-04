@@ -7,7 +7,7 @@ import torchvision.transforms as transforms
 from torchvision.io import read_image
 from torch.utils.data import Dataset
 
-from sqlAlchemy_db import HeadPositionTrain, HeadPositionValidation, session
+from db_sqlAlchemy import HeadPositionTrain, HeadPositionValidation, session
 from parameters import folder_dst_lst, db_sql_file, batch_size, LIMIT_DATASET, SPLIT_TRAIN_SET
 
 

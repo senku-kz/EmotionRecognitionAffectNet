@@ -1,15 +1,11 @@
 # EmotionRecognition
 
 ## Order of execution
-nohup python path/to/script.py &
+python db_insert_records_into_sql.py
 
-nohup python mat2csv.py &
+python db_add_head_position_information.py
 
-nohup python csv2sqlite.py &
-
-nohup python move_files_by_label.py &
-
-nohup python train_model.py &
+python models_train.py
 
 
 ## for venv
