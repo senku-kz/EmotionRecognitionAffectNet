@@ -20,6 +20,7 @@ from parameters import epoch_number, learning_rate, model_dst, CUDA_N
 from discrete_categories import camera_positions
 
 from my_loger import logging
+from models_tables import save_value, save_dic_as_table
 
 
 def normalize_image(image):
@@ -266,6 +267,10 @@ def test_the_model(model, dataset, iterator, criterion=None, model_dst=model_dst
     test_loss, test_acc = evaluate(model, iterator, dataset_size_test, criterion, device)
     logging.info(f'Test Loss: {test_loss:.3f} | Test Acc: {test_acc * 100:.2f}%')
 
+    filename_url = os.path.join(model_dst, 'accuracy_table_%s_total.txt' % (model.model_name))
+    save_value(filename_url, test_acc)
+    return test_loss, test_acc
+
 
 def save_model(model, optimizer, criterion, model_file, epochs=0):
     # Save final model
@@ -307,6 +312,7 @@ def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, mod
     # prepare to count predictions for each class
     correct_pred = {classname: 0 for classname in emotions}
     total_pred = {classname: 0 for classname in emotions}
+    accuracy_pred = {classname: 0 for classname in emotions}
 
     # again no gradients needed
     with torch.no_grad():
@@ -331,16 +337,22 @@ def test_model_separate_accuracy(model, dataset, dataloader, criterion=None, mod
         if total_pred[classname] != 0:
             accuracy = 100 * float(correct_count) / total_pred[classname]
             logging.info(f'Accuracy for class: {classname:5s} is {accuracy:.1f} %')
+            accuracy_pred[classname] = accuracy
         else:
             logging.info(f'Accuracy for class: {classname:5s} not available')
+            accuracy_pred[classname] = float('inf')
 
-    s1_file = os.path.join(model_dst, 'emotion_correct_%s_%s.txt' % (model.model_name, camera))
-    with open(s1_file, 'w') as file:
-        file.write('\n'.join([f'{k}:\t{v}' for k, v in correct_pred.items()]))
+    # s1_file = os.path.join(model_dst, 'emotion_correct_%s_%s.txt' % (model.model_name, camera))
+    # with open(s1_file, 'w') as file:
+    #     file.write('\n'.join([f'{k}:\t{v}' for k, v in correct_pred.items()]))
+    #
+    # s2_file = os.path.join(model_dst, 'emotion_count_%s_%s.txt' % (model.model_name, camera))
+    # with open(s2_file, 'w') as file:
+    #     file.write('\n'.join([f'{k}\t{v}' for k, v in total_pred.items()]))
+    filename_url = os.path.join(model_dst, 'accuracy_table_%s_%s.txt' % (model.model_name, camera))
+    save_dic_as_table(filename_url, correct_pred, total_pred, accuracy_pred)
 
-    s2_file = os.path.join(model_dst, 'emotion_count_%s_%s.txt' % (model.model_name, camera))
-    with open(s2_file, 'w') as file:
-        file.write('\n'.join([f'{k}\t{v}' for k, v in total_pred.items()]))
+    return correct_pred, total_pred, accuracy_pred
 
 
 def run_models(model_type):

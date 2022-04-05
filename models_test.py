@@ -1,9 +1,13 @@
 import logging
+import os.path
+
+import numpy as np
 
 from discrete_categories import camera_positions
 from models_train import test_the_model, test_model_separate_accuracy
 from parameters import model_dst
 from db_split_dataset import ds_test_all, ds_test_cam
+from models_tables import save_dic_as_table
 
 from models.VGG import VGG
 from models.CoAtNet import coatnet_0
@@ -36,7 +40,7 @@ def test_model(model='ResNet'):
 
 
 if __name__ == '__main__':
-    # test_model('ResNet')
+    test_model('ResNet')
     # test_model('CoAtNet')
-    test_model('VGG')
+    # test_model('VGG')
     pass
