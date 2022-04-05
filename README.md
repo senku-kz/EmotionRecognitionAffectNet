@@ -54,6 +54,12 @@ docker load < emotion_recognition_env.tar
 docker save emotion_recognition_env:gpu > emotion_recognition_env_gpu.tar
 docker load < emotion_recognition_env_gpu.tar
 
+#certutil -hashfile <file> MD5
+
+certutil -hashfile emotion_recognition_env.tar MD5
+
+md5sum emotion_recognition_env.tar
+
 
 https://devopscube.com/keep-docker-container-running/
 https://medium.com/bb-tutorials-and-thoughts/docker-export-vs-save-7053504546e5
