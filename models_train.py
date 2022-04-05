@@ -251,11 +251,11 @@ def test_the_model(model, dataset, iterator, criterion=None, model_dst=model_dst
     dataset_size_test = len(dataset)
     model_file_url = os.path.join(model_dst, '%s_final.pt' % model.model_name)
     device = torch.device(CUDA_N if torch.cuda.is_available() else 'cpu')
+    model = model.to(device)
     # =================
     if criterion is None:
         criterion = nn.CrossEntropyLoss()
         criterion = criterion.to(device)
-        model = model.to(device)
     # =================
 
     loaded_file = torch.load(model_file_url)
