@@ -41,6 +41,6 @@ def test_model(model='ResNet'):
 
 if __name__ == '__main__':
     test_model('ResNet')
-    # test_model('CoAtNet')
-    # test_model('VGG')
+    test_model('CoAtNet')
+    test_model('VGG')
     pass

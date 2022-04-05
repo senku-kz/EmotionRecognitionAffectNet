@@ -385,9 +385,9 @@ def run_models(model_type):
 
 if __name__ == '__main__':
     # Hyper parameters are import from parameters.py
-    run_models('ResNet')
+    # run_models('ResNet')
 
-    # model_type_lst = ['CoAtNet', 'ResNet', 'VGG']
-    # for i in model_type_lst:
-    #     run_models(i)
+    model_type_lst = ['CoAtNet', 'ResNet', 'VGG']
+    for i in model_type_lst:
+        run_models(i)
     logging.info('Congratulations! Training completed successfully!')
