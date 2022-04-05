@@ -26,12 +26,14 @@ docker run -it python:3.9.0
 
 cd docker/
 # docker build .
-docker build -t emotion_recognition_env:gpu .
+
+docker build -t emotion_recognition_env:latest .
 
 # docker run --rm --name emotion -v ${PWD}:/app emotion_recognition_env
 # docker run --rm --name emotion -ti -v ${PWD}:/app emotion_recognition_env bash
 # docker run --rm --name emotion -d -v ${PWD}:/app emotion_recognition_env tail -f /dev/null
 # docker run --rm --name emotion -ti -v ${PWD}:/app emotion_recognition_env
+
 docker run --rm --name emotion -d -v ${PWD}:/app emotion_recognition_env
 
 docker run --rm --gpus device=0 --name emotion -d -v ${PWD}:/app emotion_recognition_env
