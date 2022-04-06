@@ -14,8 +14,8 @@ folder_dst_dic = {i.split('/')[-1]: i for i in folder_dst_lst}
 CUDA_N = 'cuda'
 
 # for train models
-batch_size = 32
-epoch_number = 100
+batch_size = 2
+epoch_number = 1
 learning_rate = 0.001
 
 # LIMIT_DATASET = 100
