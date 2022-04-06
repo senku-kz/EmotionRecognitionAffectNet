@@ -11,6 +11,7 @@ if __name__ == '__main__':
     import torch
     print("Cuda version: ", torch.__version__)
     print("Cuda available: ", torch.cuda.is_available())
+    print("Cuda device: ", torch.cuda.current_device())
     print("Device name:", torch.cuda.get_device_name())
 
     # Step 2: Check Tensorflow
