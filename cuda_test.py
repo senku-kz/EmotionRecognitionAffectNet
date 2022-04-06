@@ -1,3 +1,6 @@
+from db_sqlAlchemy import HeadPositionTrain, HeadPositionValidation, session
+
+
 """
 pip install tensorflow
 pip install keras
@@ -17,3 +20,8 @@ if __name__ == '__main__':
     # Step 3: Check Keras (optional)
     # from keras import backend as K
     # print(K.tensorflow_backend._get_available_gpus())
+
+    # Step 4: Test DB count
+    print('Test SQLite file:')
+    print(f'Row count in {HeadPositionTrain.__tablename__} is {session.query(HeadPositionTrain).count()}')
+    print(f'Row count in {HeadPositionValidation.__tablename__} is {session.query(HeadPositionValidation).count()}')
