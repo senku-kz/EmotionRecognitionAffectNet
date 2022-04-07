@@ -45,5 +45,8 @@ if __name__ == '__main__':
     for filename in files:
         url = os.path.join(model_dst, filename)
         if os.path.exists(url):
-            loaded_file = torch.load(url)
-            print(filename, loaded_file['epochs'])
+            try:
+                loaded_file = torch.load(url)
+                print(filename, loaded_file['epochs'])
+            except:
+                print(filename, 'File corrupted')
