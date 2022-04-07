@@ -1,5 +1,4 @@
 from torchsummary import summary
-
 from models.CoAtNet import coatnet_0
 from models.ResNet import ResNet50
 from models.VGG import VGG
