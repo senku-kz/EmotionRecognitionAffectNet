@@ -75,6 +75,6 @@ if __name__ == '__main__':
     # create_plot_2_1(model_dst, model_name='CoAtNet')
     # create_plot_2_1(model_dst, model_name='VGG')
     # create_plot_2_1(model_dst, model_name='ResNet')
+    create_plot_4_1(model_dst, model_name='ResNet')
     create_plot_4_1(model_dst, model_name='CoAtNet')
     create_plot_4_1(model_dst, model_name='VGG')
-    create_plot_4_1(model_dst, model_name='ResNet')
